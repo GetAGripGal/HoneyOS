@@ -24,6 +24,9 @@ export class Display {
         this.root_element = undefined;
     }
 
+    /**
+     * Initialize the display
+     */
     init() {
         console.log("initializing display");
 
@@ -71,7 +74,8 @@ export class Display {
  */
 const setupStyle = () => {
     const styleElement = document.createElement("style");
-    styleElement.innerHTML = `
+
+    styleElement.textContent = `
         @font-face {
             font-family: ibm-vga-8x8;
             src: url(data:font/ttf;base64,${IBM_VGA_8X8_BASE64}) format('truetype');
@@ -104,6 +108,9 @@ const setupStyle = () => {
  * @returns The resulting html
  */
 const asciiToHtml = (str) => {
+    // Sanitize the input
+    const sanitized = html_escape(str);
+
     const ansiToHtmlMap = {
         // Reset
         "\x1b[0m": '</span>',
@@ -149,5 +156,18 @@ const asciiToHtml = (str) => {
         "\x1b[107m": '<span style="background-color:rgb(255,255,255)">',
     };
 
-    return str.replace(/\x1b\[[0-9;]*m/g, match => ansiToHtmlMap[match] || '');
+    return sanitized.replace(/\x1b\[[0-9;]*m/g, match => ansiToHtmlMap[match] || '');
+}
+
+/**
+ * Sanitize a string to avoid xxs attacks
+ * @param {string} input The string to sanitize html out of 
+ */
+const html_escape = (input) => {
+    return input
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\"", "&quot;")
+        .replace("'", "&#39;")
 }

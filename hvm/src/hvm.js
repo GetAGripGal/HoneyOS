@@ -9,4 +9,4 @@ import { Terminal } from "./terminal";
 export class HVM {
     static display = new Display();
     static terminal = new Terminal();
-}           
+}
