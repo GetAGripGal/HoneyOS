@@ -13,15 +13,46 @@ export const DisplayMode = {
 };
 
 /**
+ * The text-mode display buffer
+ * @class
+ * @property {string} inner The inner html string that will be rendered in text-mode+
+ * @property {boolean} needs_refresh The flag that keeps track if the display needs a refresh
+ */
+export class TextModeBuffer {
+    constructor() {
+        this.inner = "";
+        this.needs_refresh = false;
+    }
+
+    /**
+     * Clear the text buffer
+     */
+    clear() {
+        this.inner = "";
+    }
+
+    /**
+     * Add a string of ascii chars to the buffer and convert them to html
+     * @param {string} chars
+     */
+    push_chars(chars) {
+        this.inner += asciiToHtml(chars);
+        this.needs_refresh = true;
+    }
+};
+
+/**
  * The in-browser display for the HVM
  * @class
  * @property {DisplayMode} mode The current display mode
  * @property {HTMLDivElement | undefined} root_element The root div element
+ * @property {TextModeBuffer} textmode_buffer The textmode html buffer
  */
 export class Display {
     constructor() {
         this.mode = DisplayMode.Text;
         this.root_element = undefined;
+        this.textmode_buffer = new TextModeBuffer();
     }
 
     /**
@@ -43,7 +74,18 @@ export class Display {
         const updateDisplay = () => {
             switch (this.mode) {
                 case DisplayMode.Text:
-                    // this.root_element.innerHTML = ;
+                    if (this.textmode_buffer.needs_refresh) {
+                        // Check if the user is currently scrolled to the bottom
+                        const is_scrolled_to_bottom = this.root_element.scrollHeight - this.root_element.clientHeight <= this.root_element.scrollTop + 1;
+
+                        this.root_element.innerHTML = this.textmode_buffer.inner;
+                        this.textmode_buffer.needs_refresh = false;
+
+                        // Automatically scroll to the bottom if the user has scrolled all the way down
+                        if (is_scrolled_to_bottom) {
+                            this.root_element.scrollTop = this.root_element.scrollHeight;
+                        }
+                    }
                     break;
                 case DisplayMode.FrameBuffer:
                     break;
@@ -60,7 +102,7 @@ export class Display {
     setMode(mode) {
         switch (mode) {
             case DisplayMode.Text:
-                this.root_element.innerHTML = asciiToHtml(ASCII_COLOR_ICON + "\n" + "With Love! <3 - GetAGripGal");
+                this.root_element.innerHTML = this.textmode_buffer.inner;
                 break;
             case DisplayMode.FrameBuffer:
                 this.root_element.innerHTML = "Framebuffer mode not implemented";
@@ -96,6 +138,8 @@ const setupStyle = () => {
             background: #000;
             color: #fff;
             font-size: 16px;
+
+            overflow-y: auto;
         }
     `;
 
