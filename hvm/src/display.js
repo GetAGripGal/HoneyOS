@@ -35,8 +35,18 @@ export class TextModeBuffer {
      * Add a string of ascii chars to the buffer and convert them to html
      * @param {string} chars
      */
-    push_chars(chars) {
-        this.inner += asciiToHtml(chars);
+    pushChars(chars) {
+        this.inner += chars;
+        this.needs_refresh = true;
+    }
+
+    /**
+     * Remove an amount of chars from the end of the buffer
+     * @param {number} amount The amount of chars to remove from the buffer 
+     */
+    removeChars(amount) {
+        const last_char = this.inner.length;
+        this.inner = this.inner.substring(0, last_char - amount);
         this.needs_refresh = true;
     }
 };
@@ -78,7 +88,7 @@ export class Display {
                         // Check if the user is currently scrolled to the bottom
                         const is_scrolled_to_bottom = this.root_element.scrollHeight - this.root_element.clientHeight <= this.root_element.scrollTop + 1;
 
-                        this.root_element.innerHTML = this.textmode_buffer.inner;
+                        this.root_element.innerHTML = asciiToHtml(this.textmode_buffer.inner);
                         this.textmode_buffer.needs_refresh = false;
 
                         // Automatically scroll to the bottom if the user has scrolled all the way down
@@ -147,7 +157,7 @@ const setupStyle = () => {
 }
 
 /**
- * Apply ascii escape sequences to a string
+ * Interpret the ascii escape sequences for font display
  * @param {string} str 
  * @returns The resulting html
  */
