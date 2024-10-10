@@ -3,8 +3,8 @@ import { Display } from "./display";
 /**
  * The Honey Virtual Machine
  * @class
- * @property {Display} display
+ * @property {Display} display The vm display
  */
-export class HVM {
+export class VM {
     static display = new Display();
 }

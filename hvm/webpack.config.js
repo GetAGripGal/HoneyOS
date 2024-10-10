@@ -10,7 +10,8 @@ module.exports = (env, argv) => {
         entry: "./src/index.js",
         output: {
             path: path.resolve(__dirname, "dist"),
-            filename: outfile
+            filename: outfile,
+            library: "HVM"
         },
         optimization: {
             minimize: argv.mode == 'production',

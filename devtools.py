@@ -3,10 +3,13 @@
 from dataclasses import dataclass
 from enum import Enum
 import socketserver
+import subprocess
 import sys
 import os
 import shutil
 from http.server import SimpleHTTPRequestHandler
+
+from kernel.build import CompileResult, compile_kernel
 
 HELP_MESSAGE = """devtools.py {action} {options}
 actions:
@@ -79,6 +82,23 @@ def read_args() -> Args:
     return args
 
 """
+Util methods
+"""
+
+def check_for_nodejs() -> bool:
+    """ Check if node js is installed on the host system """
+    try:
+        result = subprocess.run(["node", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        print("Node installation found: " + result.stdout.decode())
+    except subprocess.CalledProcessError as error:
+        print(f"Failed to determine installed node version: {error}")
+        return False
+    except FileNotFoundError:
+        print("Node installation not found on host systen")
+        return False
+    return True
+
+"""
 Distribution methods
 """
 
@@ -87,12 +107,28 @@ def distribute_hvm():
 
     HVM_OUTFILE = "hvm.min.js"
 
+    if not check_for_nodejs():
+        print("Failed to distribute hvm.js")
+        return
+
     # Run the distribution script
     os.system("cd hvm && npm install")
     os.system("cd hvm && npm run dist")
 
     # Move output to dist directory
     shutil.copy("hvm/dist/" + HVM_OUTFILE, DIST_DIRECTORY + "/" + HVM_OUTFILE)
+
+def distribute_kernel():
+    """ Distribute the kernel """
+
+    result = compile_kernel("dist")
+    if result == CompileResult.SUCCESS:
+        print("Successfully compiled kernel")
+    if result == CompileResult.FAILURE:
+        print("Compiling kernel failed")
+    if result == CompileResult.ABORTED:
+        print("Compiling kernel aborted")
+
 
 def distribute_website():
     """ Distribute the website """
@@ -110,7 +146,7 @@ def distribute(args: Args):
     if args.dist_target == DistTarget.ALL or args.dist_target == DistTarget.HVM:
         distribute_hvm()
     if args.dist_target == DistTarget.ALL or args.dist_target == DistTarget.KERNEL:
-        pass
+        distribute_kernel()
     if args.dist_target == DistTarget.ALL or args.dist_target == DistTarget.WEBSITE:
         distribute_website()
 
