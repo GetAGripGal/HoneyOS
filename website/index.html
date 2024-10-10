@@ -5,11 +5,11 @@
     <meta charset="utf-8">
     <script src="hvm.min.js"></script>
     <script>
-        window.addEventListener("load", () => {
+        window.addEventListener("load", async () => {
             // Instantiate the hvm
-            HVM.VM.display.init();
-
-            const kernel = HVM.KernelModule.load("honey.wasm");
+            await HVM.VM.init({
+                kernel_url: "honey.wasm"
+            });
         });
     </script>
 </head>

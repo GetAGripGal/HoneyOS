@@ -16,6 +16,16 @@ module.exports = (env, argv) => {
         optimization: {
             minimize: argv.mode == 'production',
             minimizer: [new TerserPlugin({ parallel: true })]
+        },
+        module: {
+            // Load js files as raw string when its appended with `?raw`
+            rules: [
+                {
+                    test: /\.js$/,
+                    resourceQuery: /raw/,
+                    type: 'asset/source',
+                }
+            ]
         }
     }
 } 

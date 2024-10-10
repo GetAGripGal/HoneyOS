@@ -158,6 +158,11 @@ class ServeHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIST_DIRECTORY, **kwargs)
 
+    def end_headers(self):
+        self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
+        self.send_header('Cross-Origin-Embedder-Policy', 'require-corp')
+        return super().end_headers()
+
 class ServeTCPServer(socketserver.TCPServer):
     allow_reuse_address = True 
     allow_reuse_port = True

@@ -78,31 +78,18 @@ export class Display {
 
         this.setMode(DisplayMode.Text); // The default display mode is text-mode
 
-        /**
-        * The callback for `requestAnimationFrame` that updates the display
-        */
-        const updateDisplay = () => {
-            switch (this.mode) {
-                case DisplayMode.Text:
-                    if (this.textmode_buffer.needs_refresh) {
-                        // Check if the user is currently scrolled to the bottom
-                        const is_scrolled_to_bottom = this.root_element.scrollHeight - this.root_element.clientHeight <= this.root_element.scrollTop + 1;
+        requestAnimationFrame(() => updateDisplay(this));
+    }
 
-                        this.root_element.innerHTML = asciiToHtml(this.textmode_buffer.inner);
-                        this.textmode_buffer.needs_refresh = false;
-
-                        // Automatically scroll to the bottom if the user has scrolled all the way down
-                        if (is_scrolled_to_bottom) {
-                            this.root_element.scrollTop = this.root_element.scrollHeight;
-                        }
-                    }
-                    break;
-                case DisplayMode.FrameBuffer:
-                    break;
-            }
-            requestAnimationFrame(updateDisplay);
-        };
-        requestAnimationFrame(updateDisplay);
+    /**
+     * Initialize the display on a custom html element.
+     * This does not impact the style of the element
+     * @param {HTMLElement} root_element The display element
+     */
+    initOnElement(root_element) {
+        this.root_element = root_element;
+        this.setMode(DisplayMode.Text); // The default display mode is text-mode
+        requestAnimationFrame(() => updateDisplay(this));
     }
 
     /**
@@ -120,6 +107,32 @@ export class Display {
         }
     }
 }
+
+/**
+ * The callback for `requestAnimationFrame` that updates the display
+ * @param {Display} display The display to update
+ */
+const updateDisplay = (display) => {
+    switch (display.mode) {
+        case DisplayMode.Text:
+            if (display.textmode_buffer.needs_refresh) {
+                // Check if the user is currently scrolled to the bottom
+                const is_scrolled_to_bottom = display.root_element.scrollHeight - display.root_element.clientHeight <= display.root_element.scrollTop + 1;
+
+                display.root_element.innerHTML = asciiToHtml(display.textmode_buffer.inner);
+                display.textmode_buffer.needs_refresh = false;
+
+                // Automatically scroll to the bottom if the user has scrolled all the way down
+                if (is_scrolled_to_bottom) {
+                    display.root_element.scrollTop = display.root_element.scrollHeight;
+                }
+            }
+            break;
+        case DisplayMode.FrameBuffer:
+            break;
+    }
+    requestAnimationFrame(() => updateDisplay(display));
+};
 
 /**
  * Setup the style for the display
