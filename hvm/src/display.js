@@ -69,8 +69,6 @@ export class Display {
      * Initialize the display
      */
     init() {
-        console.log("initializing display");
-
         setupStyle();
         this.root_element = document.createElement("div");
         this.root_element.id = "hvm-display";

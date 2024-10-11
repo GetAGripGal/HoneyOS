@@ -2,32 +2,48 @@ import { VM } from "./hvm";
 import kernel_worker_source from "./workers/kernel-worker.js?raw";
 
 /**
- * A wasm hvm kernel module.
+ * A wasm hvm kernel.
  * @class
- * @property {WebAssembly.Memory} memory The kernel memory
- * @property {Worker} worker The worker the kernel is run on
+ * @property {WebAssembly.Memory | undefined} memory The kernel memory
+ * @property {Worker | undefined} worker The worker the kernel is run on
  */
-export class KernelModule {
+export class Kernel {
+    constructor() {
+        this.memory = undefined;
+        this.worker = undefined;
+    }
+
     /**
     * Create a hvm kernel module from a wasm binary 
     * @param {string} url The url to the wasm binary
-    * @returns {Promise<KernelModule>} The loaded kernel module
+    * @returns {Promise<Kernel>} The loaded kernel
     */
     static async load(url) {
-        this.memory = new WebAssembly.Memory({ initial: 10, maximum: 1024, shared: true });
+        const result = new Kernel();
+
+        result.memory = new WebAssembly.Memory({ initial: 2, maximum: 2, shared: true });
 
         const binary = await fetch(url)
             .then(response => response.arrayBuffer())
             .catch(reason => {
-                VM.display.textmode_buffer.pushChars(`Failed to fetch kernel: ${reason}`);
+                VM.display.textmode_buffer.pushChars(`Failed to fetch kernel: ${reason}\n`);
             });
 
-        this.worker = new Worker(workerSourceToUrl(kernel_worker_source));
-        this.worker.onmessage = message => {
-            VM.display.textmode_buffer.pushChars(message.data.error);
+        result.worker = new Worker(workerSourceToUrl(kernel_worker_source));
+        result.worker.onmessage = message => {
+            VM.display.textmode_buffer.pushChars(message.data.error + "\n");
         };
 
-        this.worker.postMessage([binary, this.memory]);
+        result.worker.postMessage([binary, result.memory]);
+
+        return result;
+    }
+
+    /**
+     * Terminate the kernel
+     */
+    terminate() {
+        this.worker.terminate();
     }
 }
 

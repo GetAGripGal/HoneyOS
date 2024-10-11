@@ -2,7 +2,7 @@ self.onmessage = async event => {
     const [binary, memory] = event.data;
 
     await WebAssembly.instantiate(binary, {
-        js: memory
+        env: { memory }
     }).then(result => {
         const instance = result.instance;
         instance.exports._start();

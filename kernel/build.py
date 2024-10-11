@@ -18,7 +18,7 @@ SOURCE_FILES = [
 ]
 
 # Clang compiler directives
-COMPILER_OPTIONS = ["--target=wasm32", "-nostdlib", "-Wl,--no-entry"]
+COMPILER_OPTIONS = ["--target=wasm32", "-nostdlib", "-Wl,--no-entry", "-Wl,--import-memory", "-Wl,--shared-memory", "-pthread"]
 
 class CompileResult(Enum):
     """ The result of the compiler """
