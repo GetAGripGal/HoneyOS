@@ -9,4 +9,4 @@
 #define HS_KERNEL_MINOR_VERSION 1
 #define HS_KERNEL_VERSION_STRING "honeyos-kernel" xstr(HS_KERNEL_MAJOR_VERSION) "." xstr(HS_KERNEL_MINOR_VERSION)
 
-#endif
+#endif // VERSION_H

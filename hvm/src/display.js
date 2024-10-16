@@ -1,4 +1,5 @@
 import { ASCII_COLOR_ICON, IBM_VGA_8X8_BASE64 } from "./assets";
+import { System } from "./systems";
 
 /**
  * The display mode for the hvm in-browser display
@@ -15,20 +16,15 @@ export const DisplayMode = {
 /**
  * The text-mode display buffer
  * @class
- * @property {string} inner The inner html string that will be rendered in text-mode+
- * @property {boolean} needs_refresh The flag that keeps track if the display needs a refresh
+ * @property {string[]} buffers The text buffers (double buffered)
+ * @property {number} buffer_index The current buffer index
+ * @property {boolean} needs_refresh The flag that indicates display needs to be refreshed
  */
 export class TextModeBuffer {
     constructor() {
-        this.inner = "";
+        this.buffers = ["", ""];
+        this.buffer_index = 0;
         this.needs_refresh = false;
-    }
-
-    /**
-     * Clear the text buffer
-     */
-    clear() {
-        this.inner = "";
     }
 
     /**
@@ -36,18 +32,22 @@ export class TextModeBuffer {
      * @param {string} chars
      */
     pushChars(chars) {
-        this.inner += chars;
+        this.buffers[this.buffer_index] += chars;
+    }
+
+    /**
+     * Swap the buffers
+     */
+    swap() {
+        this.buffer_index = this.buffer_index ^ 1;
         this.needs_refresh = true;
     }
 
     /**
-     * Remove an amount of chars from the end of the buffer
-     * @param {number} amount The amount of chars to remove from the buffer 
-     */
-    removeChars(amount) {
-        const last_char = this.inner.length;
-        this.inner = this.inner.substring(0, last_char - amount);
-        this.needs_refresh = true;
+    * Clear the text buffers
+    */
+    clear() {
+        this.buffers[this.buffer_index] = "";
     }
 };
 
@@ -58,8 +58,9 @@ export class TextModeBuffer {
  * @property {HTMLDivElement | undefined} root_element The root div element
  * @property {TextModeBuffer} textmode_buffer The textmode html buffer
  */
-export class Display {
+export class Display extends System {
     constructor() {
+        super();
         this.mode = DisplayMode.Text;
         this.root_element = undefined;
         this.textmode_buffer = new TextModeBuffer();
@@ -97,27 +98,51 @@ export class Display {
     setMode(mode) {
         switch (mode) {
             case DisplayMode.Text:
-                this.root_element.innerHTML = this.textmode_buffer.inner;
+                this.root_element.innerHTML = this.textmode_buffer.buffers[this.textmode_buffer.buffer_index];
                 break;
             case DisplayMode.FrameBuffer:
                 this.root_element.innerHTML = "Framebuffer mode not implemented";
                 break;
         }
     }
+
+    processMessage(message) {
+        switch (message.operation) {
+            case "textmode-clear":
+                this.textmode_buffer.clear();
+                break;
+            case "textmode-push-chars":
+                this.textmode_buffer.pushChars(String.fromCharCode(...message.data));
+                break;
+            case "textmode-swap":
+                this.textmode_buffer.swap();
+                break;
+        }
+    }
 }
+
+let last_update = performance.now();
 
 /**
  * The callback for `requestAnimationFrame` that updates the display
  * @param {Display} display The display to update
  */
 const updateDisplay = (display) => {
+    let now = performance.now();
+    let delta = now - last_update;
+
+    let fps = 1000 / delta;
+    console.log("FPS: " + fps.toFixed(2));
+
+    // Update the last_update timestamp for the next frame
+    last_update = now;
     switch (display.mode) {
         case DisplayMode.Text:
             if (display.textmode_buffer.needs_refresh) {
                 // Check if the user is currently scrolled to the bottom
                 const is_scrolled_to_bottom = display.root_element.scrollHeight - display.root_element.clientHeight <= display.root_element.scrollTop + 1;
 
-                display.root_element.innerHTML = asciiToHtml(display.textmode_buffer.inner);
+                display.root_element.innerHTML = asciiToHtml(display.textmode_buffer.buffers[display.textmode_buffer.buffer_index ^ 1]);
                 display.textmode_buffer.needs_refresh = false;
 
                 // Automatically scroll to the bottom if the user has scrolled all the way down
@@ -129,6 +154,7 @@ const updateDisplay = (display) => {
         case DisplayMode.FrameBuffer:
             break;
     }
+
     requestAnimationFrame(() => updateDisplay(display));
 };
 
