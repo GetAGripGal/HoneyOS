@@ -1,0 +1,11 @@
+{
+	"label": "www",
+	"type": "js",
+	"path": "www",
+	"dependsOn": [],
+	"outDir": "www",
+	"outName": "index",
+	"assets": [
+		"www/assets/index.html"
+	]
+}

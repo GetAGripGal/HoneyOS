@@ -1,0 +1,12 @@
+{
+	"name": "hosbuild",
+	"type": "module",
+	"description": "The devtools for the honeyos environment. Handles bundling and serving the individual components.",
+	"source": "index.js",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"devDependencies": {
+		"rollup": "^4.47.1"
+	}
+}

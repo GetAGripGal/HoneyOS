@@ -1,0 +1,6 @@
+{
+	"name": "honeyos-site",
+	"type": "module",
+	"description": "The source code for honeyos.net",
+	"source": "index.js"
+}
