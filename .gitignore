@@ -1,3 +1,2 @@
-dist/
-src/site/
-src/tools/hosdist/node_modules/*
+./dist/
+./src/tools/hosdist/node_modules/*

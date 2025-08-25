@@ -1,15 +1,36 @@
 /**
+ * The welcome message displayed in the console.
+ * @type {string}
+ */
+const WELCOME_MESSAGE = `\
+    ██░░░░██    
+  ▓▓██░░░░██▓▓  
+  ████▒▒▒▒████			
+▒▒▒▒▓▓▓▓▓▓▓▓▒▒▒▒	Welcome to honeyos.net!
+░░░░░░░░░░░░░░░░	-----------------------
+  ▒▒▓▓▓▓▓▓▓▓▒▒  
+  ██▒▒▒▒▒▒▒▒██  
+    ████████    
+`;
+
+/**
+ * Greet the user in the console.
+ */
+function greet() {
+	console.log(WELCOME_MESSAGE);
+}
+
+/**
  * @typedef State The global state for the honeyos website.  
  * @type {object}
  * @property {HTMLCanvasElement | undefined} canvas The canvas used to display the honeyos framebuffer.
  */
 
-import { greet } from "./greet.js";
 
 /** @type {State} */
 const state = {
 	canvas: undefined
-}
+};
 
 /**
  * Fetch the display canvas.
@@ -44,7 +65,7 @@ const callbacks = {
 	resize: (_) => {
 		resize_canvas();	
 	}
-}
+};
 
 /**
  * Register the event listeners in the callbacks object.
