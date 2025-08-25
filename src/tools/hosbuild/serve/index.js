@@ -64,10 +64,12 @@ function createExpressApp() {
  */
 function serve(port = undefined) {
 	const servePort = port ?? DEFAULT_PORT;
+	console.trace("Creating express.js app config");
 	const app = createExpressApp();
-
+	
+	console.trace("Starting server.");
 	app.listen(servePort, () => {
-		console.log("Serving at http://localhost:" + servePort);
+		console.info("Listening at http://localhost:" + servePort);
 	});
 }
 

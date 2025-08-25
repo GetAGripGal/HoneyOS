@@ -27,7 +27,8 @@ const TARGET_DIRECTORY = process.env.WORKSPACE_DIR + "/targets/";
  */
 function loadTargetDefinitions() {
 	const definitions = new Map();
-
+	
+	console.trace("Loading target definitions from `" + TARGET_DIRECTORY + "`");
 	fs.readdirSync(TARGET_DIRECTORY)
 		.forEach(file => {
 			if (!file.endsWith(".json")) return;

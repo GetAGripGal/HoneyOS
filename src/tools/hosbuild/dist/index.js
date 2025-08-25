@@ -33,6 +33,7 @@ const targetHandlers = {
 function createDistDir(target) {
 	if (!fs.existsSync(DIST_DIR)) {
 		fs.mkdirSync(DIST_DIR); // Create the dist directory.
+		console.trace("Creating output dir -> `" + DIST_DIR + "`")
 	}
 
 	if (target.outDir === null) return;
@@ -61,7 +62,7 @@ function copyAssets(target) {
 		const sourcePath = SRC_DIR + "/" + assetPath;
 		const destPath = DIST_DIR + "/" + target.outDir + "/" + getFileNameFromPath(assetPath);
 		fs.copyFileSync(sourcePath, destPath);
-		console.log("Copied asset `" + sourcePath + "` to `" + destPath + "`");
+		console.info("Copied asset `" + sourcePath + "` -> `" + destPath + "`");
 	});
 }
 
@@ -76,7 +77,8 @@ async function dist(target) {
 	if (targetDefinition === undefined) {
 		throw new Error("Invalid target definition: " + target);
 	}
-
+	
+	console.info("Distributing target `" + targetDefinition.label + "`");
 	createDistDir(targetDefinition);
 	copyAssets(targetDefinition);
 	
