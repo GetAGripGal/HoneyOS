@@ -60,13 +60,17 @@ async function distributeJs(target, src, dest) {
 	try {
 		console.trace("Invoking rollup.");
 		const bundle = await rollup(inputConfig);
+		
 		console.trace("Generating output.");
 		const { output } = await bundle.generate(outputConfig);
+		
 		console.trace("Writing bundled code to output file.")
+
 		const outputFile = 
 			dest + "/" + target.outDir + "/" + formatOutputFileName(target);
 		const code = output[0].code;
 		writeOutputFile(code, outputFile);
+		
 		console.info("Bundled target `" + target.label + "` -> `" + outputFile + "`");
 	} catch (error) {
 		console.error(error);

@@ -15,7 +15,7 @@ const SRC_DIR = process.env.WORKSPACE_DIR + "/src";
  * The directory for the resulting distrobution files.
  * @type {string}
  */
-const DIST_DIR = process.env.WORKSPACE_DIR + "/dist";
+const DIST_DIR = process.env.WORKSPACE_DIR + "/out";
 
 /**
  * The handlers for each target type.
