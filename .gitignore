@@ -1,4 +1,6 @@
+dist
 dist/*
 dist/**/*
+src/tools/hosdist/node_modules
 src/tools/hosdist/node_modules/*
 src/tools/hosdist/node_modules/**/*
