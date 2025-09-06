@@ -31,11 +31,9 @@ function log(level, ...what) {
 /**
  * Register the custom logging commands.
  */
-function registerLogger() {
+export function registerLogger() {
 	console.trace = (what) => log("trace", what);
 	console.info = (what) => log("info", what);
 	console.warn = (what) => log("warn", what);
 	console.error = (what) => log("error", what);
 }
-
-export { registerLogger };

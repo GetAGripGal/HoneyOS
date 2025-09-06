@@ -98,7 +98,7 @@ const commandHandlers = {
  * @param {Array<string>} argv The arguments to parse.
  * @returns {string | undefined} The passed command.
  */
-function getCommand(argv) {
+export function getCommand(argv) {
 	const commandIndex = 2;
 	if (argv.length < commandIndex + 1) {
 		handleInputError("No command passed.")
@@ -117,15 +117,9 @@ function getCommand(argv) {
  * @param {string} command The command to handle.
  * @param {Array<string>} argv The process arguments.
  */
-async function handleCommand(command, argv) {
+export async function handleCommand(command, argv) {
 	if (!(command in commandHandlers)) {
 		throw new Error("Command handler for command `" + command + "` has not yet been implemented.");
 	}
 	await commandHandlers[command](argv)
 }
-
-export { 
-	handleCommand,
-	getCommand 
-};
-

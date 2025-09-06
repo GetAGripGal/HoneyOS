@@ -11,7 +11,7 @@ const DEFAULT_PORT = 5100;
  * The directory to serve.
  * @param {string}
  */
-const SERVE_DIR = process.env.WORKSPACE_DIR + "/dist/www";
+const SERVE_DIR = process.env.WORKSPACE_DIR + "/out/www";
 
 /**
  * The response page for the root route.
@@ -62,7 +62,7 @@ function createExpressApp() {
  * Serve the website at the specified port.
  * @param {number | undefined} [port] The port to serve the website at. Will use `5100` if not specified.
  */
-function serve(port = undefined) {
+export function serve(port = undefined) {
 	const servePort = port ?? DEFAULT_PORT;
 	console.trace("Creating express.js app config");
 	const app = createExpressApp();
@@ -72,5 +72,3 @@ function serve(port = undefined) {
 		console.info("Listening at http://localhost:" + servePort);
 	});
 }
-
-export { serve, }

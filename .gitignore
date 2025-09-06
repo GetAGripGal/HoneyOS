@@ -1,7 +1,2 @@
-out
-out/*
-out/**/*
-
-src/tools/hosdist/node_modules
-src/tools/hosdist/node_modules/*
-src/tools/hosdist/node_modules/**/*
+out/
+src/tools/hosbuild/node_modules

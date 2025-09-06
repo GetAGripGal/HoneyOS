@@ -22,10 +22,22 @@ import fs from "fs";
 const TARGET_DIRECTORY = process.env.WORKSPACE_DIR + "/targets/";
 
 /**
+ * Load a target definition from a file.
+ * @param {string} file The path to the target defintion file.
+ * @returns {[string, TargetDefinition] | undefined} A tuple containing the target path and target definition
+ */
+function loadTargetFromFile(file) {
+	const contents = fs.readFileSync(TARGET_DIRECTORY + file, { encoding: "utf8"});
+	const parsed = JSON.parse(contents);
+	const name = parsed["label"];
+	return [name, parsed];
+}
+
+/**
  * Load the target definitions from the targets directory.
  * @returns {Map<string, TargetDefinition>} A dictionary containing the loaded target definitions. 
  */
-function loadTargetDefinitions() {
+export function loadTargetDefinitions() {
 	const definitions = new Map();
 	
 	console.trace("Loading target definitions from `" + TARGET_DIRECTORY + "`");
@@ -46,18 +58,3 @@ function loadTargetDefinitions() {
 
 	return definitions;
 }
-
-/**
- * Load a target definition from a file.
- * @param {string} file The path to the target defintion file.
- * @returns {[string, TargetDefinition] | undefined} A tuple containing the target path and target definition
- */
-function loadTargetFromFile(file) {
-	const contents = fs.readFileSync(TARGET_DIRECTORY + file, { encoding: "utf8"});
-	const parsed = JSON.parse(contents);
-	const name = parsed["label"];
-	return [name, parsed];
-}
-
-export { loadTargetDefinitions }
-

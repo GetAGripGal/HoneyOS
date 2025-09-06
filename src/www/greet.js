@@ -16,8 +16,6 @@ const WELCOME_MESSAGE = `\
 /**
  * Greet the user in the console.
  */
-function greet() {
+export function greet() {
 	console.log(WELCOME_MESSAGE);
 }
-
-export { greet, }

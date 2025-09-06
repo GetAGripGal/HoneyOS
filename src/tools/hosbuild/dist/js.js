@@ -53,7 +53,7 @@ function writeOutputFile(code, dest) {
  * @param {string} dest The destination directory.
  * @returns {boolean} Whether or not the process succeeded.
  */
-async function distributeJs(target, src, dest) {
+export async function distributeJs(target, src, dest) {
 	const inputConfig = createRollupInputConfig(target, src)
 	const outputConfig = createRollupOutputConfig(target, dest);
 
@@ -77,5 +77,3 @@ async function distributeJs(target, src, dest) {
 		return false;
 	}
 }
-
-export { distributeJs, }

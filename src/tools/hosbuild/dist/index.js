@@ -23,7 +23,7 @@ const DIST_DIR = process.env.WORKSPACE_DIR + "/out";
  */
 const targetHandlers = {
 	"js": (target) => distributeJs(target, SRC_DIR, DIST_DIR),
-	"c": (_) => {console.error("")}, 
+	"c": (_) => {console.error("Target handler for C projects have not been implemented yet.")}, 
 };
 
 /**
@@ -70,7 +70,7 @@ function copyAssets(target) {
  * Bundle, compile and distribute a part of the repo.
  * @param {string} target The target distribute.
  */
-async function dist(target) {
+export async function dist(target) {
 	const definitions = loadTargetDefinitions();
 	const targetDefinition = definitions.get(target);
 	
@@ -91,5 +91,3 @@ async function dist(target) {
 	const handler = targetHandlers[targetType];
 	await handler(targetDefinition);
 }
-
-export { dist, }

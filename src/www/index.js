@@ -14,14 +14,14 @@ const state = {
 /**
  * Fetch the display canvas.
  */
-function fetch_canvas() {
+function fetchCanvas() {
 	state.canvas = document.getElementById("display");
 }
 
 /**
  * Resize the canvas to the window size.
  */
-function resize_canvas() {
+function resizeCanvas() {
 	if (state.canvas === undefined) {
 		return;
 	}
@@ -38,11 +38,11 @@ function resize_canvas() {
 const callbacks = {
 	load: (_) => {
 		greet();
-		fetch_canvas();
-		resize_canvas();
+		fetchCanvas();
+		resizeCanvas();
 	},
 	resize: (_) => {
-		resize_canvas();	
+		resizeCanvas();	
 	}
 }
 
@@ -50,11 +50,11 @@ const callbacks = {
  * Register the event listeners in the callbacks object.
  * @property {CallbackObject} callbacks An object containing the callback functions to call. The keys must equal to a valid window event.
  */
-function register_event_listeners(callbacks) {
+function registerEventListeners(callbacks) {
 	Object.entries(callbacks).forEach(([key, value]) => {
 		window.addEventListener(key, value);
 	}); 
 }
 
 // Register the event listeners.
-register_event_listeners(callbacks);
+registerEventListeners(callbacks);
